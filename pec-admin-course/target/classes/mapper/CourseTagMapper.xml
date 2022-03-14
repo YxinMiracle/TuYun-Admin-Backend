@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxinmiracle.course.mapper.CourseTagMapper">
+    <resultMap id="showTagDataMap" type="com.yxinmiracle.model.serives.vos.CourseTagVo">
+        <id property="courseTagId" column="course_tag_id"></id>
+        <result property="courseId" column="course_id"></result>
+        <result property="courseName" column="course_name"></result>
+        <result property="tagName" column="tag_name"></result>
+        <result property="courseTagIsDelete" column="course_tag_is_delete"></result>
+        <result property="courseTagCreateTime" column="course_tag_create_time"></result>
+        <result property="courseTagUpdateTime" column="course_tag_update_time"></result>
+        <result property="haveRelationCount" column="haveRelationCount"></result>
+        <association property="createdCourseTagUser" javaType="com.yxinmiracle.model.user.pojos.User">
+            <id property="userId" column="user_id"></id>
+            <result property="username" column="username"></result>
+        </association>
+    </resultMap>
+    <select id="showTagData" parameterType="com.yxinmiracle.model.serives.dtos.CourseTagDto" resultMap="showTagDataMap">
+        SELECT
+        *,( SELECT count(*) FROM relation where relation.`knowledge_point_start_name` = t1.tag_name or relation.knowledge_point_end_name = t1.tag_name ) as haveRelationCount
+        from
+        course_tag as t1,
+        user as t2
+        where
+        t1.course_tag_update_user_id = t2.user_id
+        and
+        t1.course_id = #{courseId}
+        <if test="tagName != null and tagName != ''">
+            and t1.tag_name like concat('%',#{tagName},'%')
+        </if>
+        <if test="createTagStartTime != null and createTagEndTime != null">
+            and t1.course_tag_create_time <![CDATA[ >= ]]> #{createTagStartTime}
+            and t1.course_tag_create_time <![CDATA[ <= ]]> #{createTagStartTime}
+        </if>
+        limit
+        #{start},#{end}
+    </select>
+
+    <select id="showTagDataCount" parameterType="com.yxinmiracle.model.serives.dtos.CourseTagDto" resultType="Integer">
+        SELECT
+        count(*)
+        from
+        course_tag as t1,
+        user as t2
+        where
+        t1.course_tag_update_user_id = t2.user_id
+        and
+        t1.course_id = #{courseId}
+        <if test="tagName != null and tagName != ''">
+            and t1.tag_name like concat('%',#{tagName},'%')
+        </if>
+        <if test="createTagStartTime != null and createTagEndTime != null">
+            and t1.course_tag_create_time <![CDATA[ >= ]]> #{createTagStartTime}
+            and t1.course_tag_create_time <![CDATA[ <= ]]> #{createTagStartTime}
+        </if>
+    </select>
+
+
+</mapper>

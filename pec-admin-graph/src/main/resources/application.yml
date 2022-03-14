@@ -1,0 +1,32 @@
+server:
+  port: 19005
+spring:
+  application:
+    name: pec-admin-graph
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 175.178.60.127:8848
+  rabbitmq:
+    host: 192.168.211.132  #mq的服务器地址
+    username: guest #账号
+    password: guest #密码
+host: https://pic.yxinmiracle.com
+logging:
+  level:
+    com.yxinmiracle: debug
+mq:
+  graph:
+    exchange: graphExchange
+    queue:
+      graphAddRelationAndNode: graph.add.relationAndNode
+      updateRelationName: graph.update.relationName
+      updateTagProperty: graph.update.tagProperty
+      deleteTag: graph.delete.tag
+      resumeTag: graph.resume.tag
+    routing:
+      graphAddRelationAndNodeRouting: graph.add.relationAndNode
+      updateRelationNameRouting: graph.update.relationName
+      updateTagPropertyRouting: graph.update.tagProperty
+      deleteTagRouting: graph.delete.tag
+      resumeTagRouting: graph.resume.tag

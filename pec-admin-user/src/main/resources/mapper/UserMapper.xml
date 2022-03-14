@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxinmiracle.user.mapper.UserMapper">
+
+
+    <resultMap id="userResultMap" type="com.yxinmiracle.model.user.vos.UserVo">
+        <id property="userId" column="user_id"></id>
+        <result property="userAccount" column="user_account"></result>
+        <result property="username" column="username"></result>
+        <!--        <result property="password" column="password"></result>-->
+        <result property="phone" column="phone"></result>
+        <result property="sex" column="sex"></result>
+        <result property="image" column="image"></result>
+        <result property="email" column="email"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="updateTime" column="update_time"></result>
+        <result property="servicesId" column="services_id"></result>
+        <result property="userArticle" column="user_article"></result>
+        <result property="userIsDelete" column="user_is_delete"></result>
+
+        <association property="services"  javaType="com.yxinmiracle.model.serives.pojos.Services">
+            <id property="servicesId" column="services_id"></id>
+            <result property="servicesName" column="services_name"></result>
+            <result property="info" column="info"></result>
+            <result property="article" column="article"></result>
+            <result property="image" column="iamge"></result>
+            <result property="letter" column="letter"></result>
+            <result property="updateTime" column="update_time"></result>
+            <result property="createTime" column="create_time"></result>
+            <result property="isShow" column="is_show"></result>
+            <result property="isDelete" column="is_detele"></result>
+        </association>
+        <collection property="roleList" autoMapping="true" ofType="com.yxinmiracle.model.user.pojos.Role">
+
+        </collection>
+    </resultMap>
+    <select id="getUser" parameterType="com.yxinmiracle.model.user.dtos.PageUserDto" resultMap="userResultMap">
+        select * from
+        user as t1,
+        user_role as t2,
+        role as t3,
+        services as t4
+        where t1.user_id = t2.user_id
+        and
+        t2.role_id = t3.role_id
+        and
+        t4.services_id = t1.services_id
+        and
+        t4.is_delete = 0
+        <if test="roleId != null">
+            and t3.role_id = #{roleId}
+        </if>
+        <if test="userAccount != null">
+            and t1.user_account like concat('%',#{userAccount},'%')
+        </if>
+        <if test="username != null">
+            and t1.username like concat('%',#{username},'%')
+        </if>
+        <if test="phone != null">
+            and t1.phone like concat('%',#{phone},'%')
+        </if>
+        <if test="email != null">
+            and t1.email like concat('%',#{email},'%')
+        </if>
+        <if test="startTime != null">
+            and t1.create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and t1.create_time &lt;= #{endTime}
+        </if>
+        <if test="servicesId != null">
+            and t1.services_id = #{servicesId}
+        </if>
+        limit #{start},#{end}
+    </select>
+
+
+    <select id="getUserCount" parameterType="com.yxinmiracle.model.user.dtos.PageUserDto" resultType="Integer">
+        select count(DISTINCT(t1.user_id)) from
+        user as t1,
+        user_role as t2,
+        role as t3,
+        services as t4
+        where t1.user_id = t2.user_id
+        and
+        t2.role_id = t3.role_id
+        and
+        t4.services_id = t1.services_id
+        and
+        t4.is_delete = 0
+        <if test="roleId != null">
+            and t3.role_id = #{roleId}
+        </if>
+        <if test="userAccount != null">
+            and t1.user_account like concat('%',#{userAccount},'%')
+        </if>
+        <if test="username != null">
+            and t1.username like concat('%',#{username},'%')
+        </if>
+        <if test="phone != null">
+            and t1.phone like concat('%',#{phone},'%')
+        </if>
+        <if test="email != null">
+            and t1.email like concat('%',#{email},'%')
+        </if>
+        <if test="startTime != null">
+            and t1.create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and t1.create_time &lt;= #{endTime}
+        </if>
+        <if test="servicesId != null">
+            and t1.services_id = #{servicesId}
+        </if>
+        limit #{start},#{end}
+    </select>
+</mapper>

@@ -1,0 +1,15 @@
+server:
+  port: 19003
+spring:
+  application:
+    name: pec-admin-file
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 175.178.60.127:8848
+logging:
+  level:
+    com.yxinmiracle: debug
+host: https://pic.yxinmiracle.com
+
+

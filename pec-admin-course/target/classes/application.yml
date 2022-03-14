@@ -1,0 +1,44 @@
+server:
+  port: 19002
+spring:
+  rabbitmq:
+    host: 192.168.211.132  #mq的服务器地址
+    username: guest #账号
+    password: guest #密码
+  application:
+    name: pec-admin-course
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 175.178.60.127:8848
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.211.132:3306/pec_course?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+    username: root
+    password: 123456
+# 设置Mapper接口所对应的XML文件位置，如果你在Mapper接口中有自定义方法，需要进行该配置
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  # 设置别名包扫描路径，通过该属性可以给包中的类注册别名
+  type-aliases-package: com.yxinmiracle.model.serivces.pojos
+host: https://pic.yxinmiracle.com
+logging:
+  level:
+    com.yxinmiracle: debug
+mq:
+  graph:
+    exchange: graphExchange
+    queue:
+      graphAddRelationAndNode: graph.add.relationAndNode
+      updateRelationName: graph.update.relationName
+      updateTagProperty: graph.update.tagProperty
+      deleteTag: graph.delete.tag
+      resumeTag: graph.resume.tag
+    routing:
+      graphAddRelationAndNodeRouting: graph.add.relationAndNode
+      updateRelationNameRouting: graph.update.relationName
+      updateTagPropertyRouting: graph.update.tagProperty
+      deleteTagRouting: graph.delete.tag
+      resumeTagRouting: graph.resume.tag

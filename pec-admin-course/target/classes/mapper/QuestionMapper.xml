@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxinmiracle.course.mapper.QuestionMapper">
+
+    <resultMap id="getChoiceQuestionMap" type="com.yxinmiracle.model.serives.vos.ChoiceQuestionVo">
+        <id property="questionId" column="question_id"></id>
+        <result property="subject" column="subject"></result>
+        <result property="type" column="type"></result>
+        <result property="difficulty" column="difficulty"></result>
+        <result property="analysis" column="analysis"></result>
+        <result property="analysisVideo" column="analysis_video"></result>
+        <result property="remark" column="remark"></result>
+        <result property="isFrequency" column="is_frequency"></result>
+        <result property="isClassic" column="is_classic"></result>
+        <result property="questionCreateTime" column="question_create_time"></result>
+        <result property="questionUpdateTime" column="question_update_time"></result>
+        <result property="createQuestionUserId" column="create_question_user_id"></result>
+        <result property="createQuestionUserName" column="create_question_user_name"></result>
+        <result property="courseId" column="course_id"></result>
+        <result property="courseName" column="course_name"></result>
+
+        <collection property="courseTagList" autoMapping="true" ofType="com.yxinmiracle.model.serives.pojos.CourseTag">
+
+        </collection>
+
+        <collection property="questionItemList" autoMapping="true" ofType="com.yxinmiracle.model.serives.pojos.QuestionItem">
+
+        </collection>
+    </resultMap>
+    <select id="getChoiceList" parameterType="com.yxinmiracle.model.serives.dtos.QuestionDto"
+            resultMap="getChoiceQuestionMap">
+        select
+        *
+        FROM
+        question as t1
+        LEFT JOIN
+        question_tag as t2
+        ON
+        t1.question_id = t2.question_id
+        LEFT JOIN
+        course_tag as t3
+        ON
+        t3.course_tag_id = t2.course_tag_id
+        LEFT JOIN
+        question_item as t4
+        ON
+        t4.question_id = t1.question_id
+        WHERE
+        t1.course_id = #{courseId}
+        <if test="subject != null">
+            and t1.subject like concat('%',#{subject},'%')
+        </if>
+        <if test="type != null and type != -1">
+            and t1.type = #{type}
+        </if>
+        <if test="difficulty != null and difficulty != -1">
+            and t1.difficulty = #{difficulty}
+        </if>
+        <if test="isFrequency != null and isFrequency != -1">
+            and t1.is_frequency = #{isFrequency}
+        </if>
+        <if test="isClassic != null and isClassic != -1">
+            and t1.is_classic = #{isClassic}
+        </if>
+        <if test="createQuestionTimeStart !=null and createQuestionTimeEnd != null">
+            and t1.question_create_time <![CDATA[ >= ]]> #{createQuestionTimeStart}
+            and t1.question_create_time <![CDATA[ <= ]]> #{createQuestionTimeEnd}
+        </if>
+        <if test="courseTagIdList != null">
+            <foreach collection="courseTagIdList" item="courseTagId" separator="," open="and t3.course_tag_id in (" close=")">
+                #{courseTagId}
+            </foreach>
+        </if>
+        limit
+        #{start},#{end}
+    </select>
+
+    <select id="getChoiceListCount" parameterType="com.yxinmiracle.model.serives.dtos.QuestionDto"
+            resultType="Integer">
+        select
+        count(DISTINCT(t1.question_id))
+        FROM
+        question as t1
+        LEFT JOIN
+        question_tag as t2
+        ON
+        t1.question_id = t2.question_id
+        LEFT JOIN
+        course_tag as t3
+        ON
+        t3.course_tag_id = t2.course_tag_id
+        LEFT JOIN
+        question_item as t4
+        ON
+        t4.question_id = t1.question_id
+        WHERE
+        t1.course_id = #{courseId}
+    </select>
+
+</mapper>

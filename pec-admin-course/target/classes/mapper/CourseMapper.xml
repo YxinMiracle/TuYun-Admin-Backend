@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxinmiracle.course.mapper.CourseMapper">
+    <resultMap id="getCourseResultMap" type="com.yxinmiracle.model.serives.vos.CourseVo">
+        <id property="courseId" column="course_id"></id>
+        <result property="courseName" column="course_name"></result>
+        <result property="courseCategoryItemId" column="course_category_item_id"></result>
+        <result property="servicesId" column="services_id"></result>
+        <result property="isQuality" column="is_quality"></result>
+        <result property="isShow" column="is_show"></result>
+        <result property="isDelete" column="is_delete"></result>
+        <result property="showType" column="show_type"></result>
+        <result property="image" column="image"></result>
+        <result property="startTime" column="start_time"></result>
+        <result property="endTime" column="end_time"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="updateTime" column="update_time"></result>
+        <result property="infoPictureList" column="info_picture_list"></result>
+        <result property="price" column="price"></result>
+        <result property="letter" column="letter"></result>
+        <result property="courseArticle" column="course_article"></result>
+        <result property="infoType" column="info_type"></result>
+
+        <association property="services" javaType="com.yxinmiracle.model.serives.pojos.Services">
+            <id property="servicesId" column="services_id"></id>
+            <result property="servicesName" column="services_name"></result>
+            <result property="info" column="info"></result>
+            <result property="article" column="article"></result>
+            <result property="image" column="iamge"></result>
+            <result property="letter" column="letter"></result>
+            <result property="updateTime" column="update_time"></result>
+            <result property="createTime" column="create_time"></result>
+            <result property="isShow" column="is_show"></result>
+            <result property="isDelete" column="is_detele"></result>
+        </association>
+
+        <association property="categoryItem" javaType="com.yxinmiracle.model.advert.pojos.CategoryItem">
+            <id property="categoryId" column="category_id"></id>
+            <result property="typeId" column="type_id"></result>
+            <result property="categoryName" column="category_name"></result>
+            <result property="categoryHref" column="category_herf"></result>
+            <result property="categoryItemId" column="category_item_id"></result>
+            <result property="categorySort" column="category_sort"></result>
+            <result property="image" column="image"></result>
+        </association>
+
+        <collection property="users"  ofType="com.yxinmiracle.model.user.pojos.User">
+            <id property="userId" column="user_id"></id>
+            <result property="username" column="username"></result>
+        </collection>
+
+
+    </resultMap>
+    <select id="getCourseList" parameterType="com.yxinmiracle.model.serives.dtos.CourseDto"
+            resultMap="getCourseResultMap">
+        select
+        *
+        from
+        course as t1,
+        services as t2,
+        category_item as t3,
+        course_teacher as t4,
+        user as t5
+        where
+        t1.services_id = t2.services_id
+        and
+        t1.course_category_item_id = t3.category_id
+        and
+        t3.category_item_id is NULL
+        and
+        t4.course_id = t1.course_id
+        and
+        t5.user_id = t4.user_id
+        <if test="courseName != null and courseName != ''">
+            and t1.course_name like concat('%',#{courseName},'%')
+        </if>
+        <!-- start_time  -->
+        <if test="openClassStartTime != null and openClassEndTime != null">
+            and t1.start_time <![CDATA[ >= ]]> #{openClassStartTime}
+            and t1.start_time <![CDATA[ <= ]]> #{openClassEndTime}
+
+        </if>
+        <!-- end_time  -->
+        <if test="finishClassStartTime != null and finisClassEndTime != null">
+            and t1.end_time <![CDATA[ >= ]]> #{finishClassStartTime}
+            and t1.end_time <![CDATA[ <= ]]> #{finisClassEndTime}
+        </if>
+        <!-- create_time  -->
+        <if test="createClassStartTime != null and createClassEndTime != null">
+            and t1.create_time <![CDATA[ >= ]]> #{createClassStartTime}
+            and t1.create_time <![CDATA[ <= ]]> #{createClassEndTime}
+        </if>
+        <!-- price  -->
+        <if test="startPrice != null and endPrice != null and startPrice != -1 and endPrice != -1">
+            and t1.price <![CDATA[ >=]]> #{startPrice}
+            and t1.price <![CDATA[ <=]]> #{endPrice}
+        </if>
+
+        <if test="isQuality != -1">
+            and t1.is_quality = #{isQuality}
+        </if>
+
+        <if test="letter != null and letter!= ''">
+            and t1.letter = #{letter}
+        </if>
+
+        <if test="courseCategoryItemId != -1">
+            and t1.course_category_item_id = #{courseCategoryItemId}
+        </if>
+
+        <if test="servicesId != null">
+            and t1.services_id = #{servicesId}
+        </if>
+        limit
+        #{start},#{end}
+    </select>
+
+
+    <select id="getCourseListCount" parameterType="com.yxinmiracle.model.serives.dtos.CourseDto" resultType="Integer">
+        select
+        count(DISTINCT(t1.course_id))
+        from
+        course as t1,
+        services as t2,
+        category_item as t3,
+        course_teacher as t4,
+        user as t5
+        where
+        t1.services_id = t2.services_id
+        and
+        t1.course_category_item_id = t3.category_id
+        and
+        t3.category_item_id is NULL
+        and
+        t4.course_id = t1.course_id
+        and
+        t5.user_id = t4.user_id
+        <if test="courseName != null and courseName != ''">
+            and t1.course_name like concat('%',#{courseName},'%')
+        </if>
+        <!-- start_time  -->
+        <if test="openClassStartTime != null and openClassEndTime != null">
+            and t1.start_time <![CDATA[ >= ]]> #{openClassStartTime}
+            and t1.start_time <![CDATA[ <= ]]> #{openClassEndTime}
+
+        </if>
+        <!-- end_time  -->
+        <if test="finishClassStartTime != null and finisClassEndTime != null">
+            and t1.end_time <![CDATA[ >= ]]> #{finishClassStartTime}
+            and t1.end_time <![CDATA[ <= ]]> #{finisClassEndTime}
+        </if>
+        <!-- create_time  -->
+        <if test="createClassStartTime != null and createClassEndTime != null">
+            and t1.create_time <![CDATA[ >= ]]> #{createClassStartTime}
+            and t1.create_time <![CDATA[ <= ]]> #{createClassEndTime}
+        </if>
+        <!-- price  -->
+        <if test="startPrice != null and endPrice != null and startPrice != -1 and endPrice != -1">
+            and t1.price <![CDATA[ >=]]> #{startPrice}
+            and t1.price <![CDATA[ <=]]> #{endPrice}
+        </if>
+
+        <if test="isQuality != -1">
+            and t1.is_quality = #{isQuality}
+        </if>
+
+        <if test="letter != null and letter!= ''">
+            and t1.letter = #{letter}
+        </if>
+
+        <if test="courseCategoryItemId != -1">
+            and t1.course_category_item_id = #{courseCategoryItemId}
+        </if>
+
+        <if test="servicesId != null">
+            and t1.services_id = #{servicesId}
+        </if>
+    </select>
+</mapper>

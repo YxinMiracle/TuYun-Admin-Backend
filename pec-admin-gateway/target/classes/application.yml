@@ -1,0 +1,55 @@
+server:
+  port: 6003
+spring:
+  application:
+    name: pec-admin-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 175.178.60.127:8848
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]': # 匹配所有请求
+            allowedOrigins: "*" #跨域处理 允许所有的域
+            allowedMethods: # 支持的方法
+              - GET
+              - POST
+              - PUT
+              - DELETE
+      routes:
+        # 用户平台
+        - id: user
+          uri: lb://pec-admin-user
+          predicates:
+            - Path=/admin/user/**
+          filters:
+            - StripPrefix= 2
+        # 用户平台
+        - id: course
+          uri: lb://pec-admin-course
+          predicates:
+            - Path=/course/**
+          filters:
+            - StripPrefix= 1
+        # 文件平台
+        - id: file
+          uri: lb://pec-admin-file
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix= 1
+        # 广告平台
+        - id: file
+          uri: lb://pec-admin-advert
+          predicates:
+            - Path=/advert/**
+          filters:
+            - StripPrefix= 1
+        # 图数据库
+        - id: graph
+          uri: lb://pec-admin-graph
+          predicates:
+            - Path=/graph/**
+          filters:
+            - StripPrefix= 1

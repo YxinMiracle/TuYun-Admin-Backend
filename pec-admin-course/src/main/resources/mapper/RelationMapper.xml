@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxinmiracle.course.mapper.RelationMapper">
+
+    <select id="getShowRelationData" parameterType="com.yxinmiracle.model.serives.dtos.ShowRelationDto" resultType="com.yxinmiracle.model.serives.vos.ShowRelationCourseVo">
+        select course_id as courseId,course_name as courseName,count(course_name) as relationCount from relation
+        <where>
+            <if test="courseName != null">
+                and course_name like concat('%',#{courseName},'%')
+            </if>
+        </where>
+        GROUP BY course_id
+        limit
+        #{start},#{end}
+    </select>
+
+    <select id="getShowRelationDataCount" parameterType="com.yxinmiracle.model.serives.dtos.ShowRelationDto" resultType="Integer">
+       SELECT COUNT(DISTINCT course_id) FROM `relation`
+       <where>
+        <if test="courseName != null">
+            and course_name like concat('%',#{courseName},'%')
+        </if>
+    </where>
+    </select>
+
+
+</mapper>
