@@ -58,8 +58,8 @@ public class CourseTagController implements CourseTagControllerApi {
     }
 
     @Override
-    @GetMapping
-    public ResponseResult getAllCourseTag() {
-        return courseTagService.getAllCourseTag();
+    @GetMapping("/{courseId}")
+    public ResponseResult getAllCourseTag(@PathVariable("courseId") Integer courseId) {
+        return courseTagService.getAllCourseTag(courseId);
     }
 }

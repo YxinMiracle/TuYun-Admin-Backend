@@ -18,5 +18,5 @@ public interface CourseTagService {
 
     ResponseResult resumeTag(Integer tagId);
 
-    ResponseResult getAllCourseTag();
+    ResponseResult getAllCourseTag(Integer courseId);
 }
