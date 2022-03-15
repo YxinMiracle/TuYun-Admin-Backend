@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -60,5 +61,16 @@ public class Question implements Serializable {
 
     @TableField(value = "course_name")
     private String courseName;
+
+    public enum questionTypeEnum{
+        singleChoiceQuestion((short)1),multipleChoiceQuestion((short)2),fillTheBlanksQuestion((short)4),answerQuestion((short)5);
+
+        @Getter
+        private short code;
+
+        questionTypeEnum(short code){
+            this.code = code;
+        }
+    }
 
 }

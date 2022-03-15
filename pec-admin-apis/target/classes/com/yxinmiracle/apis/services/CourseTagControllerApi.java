@@ -42,5 +42,5 @@ public interface CourseTagControllerApi {
      * get all course tag to insert into select box
      * @return
      */
-    public ResponseResult getAllCourseTag();
+    public ResponseResult getAllCourseTag(Integer courseId);
 }
