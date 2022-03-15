@@ -2,6 +2,7 @@ package com.yxinmiracle.course.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.yxinmiracle.course.mapper.CourseTagMapper;
 import com.yxinmiracle.course.service.CourseTagService;
 import com.yxinmiracle.model.common.dtos.PageResponseResult;
@@ -91,8 +92,8 @@ public class CourseTagServiceImpl implements CourseTagService {
     }
 
     @Override
-    public ResponseResult getAllCourseTag() {
-        List<CourseTag> courseTags = courseTagMapper.selectList(null);
+    public ResponseResult getAllCourseTag(Integer courseId) {
+        List<CourseTag> courseTags = courseTagMapper.selectList(Wrappers.<CourseTag>lambdaQuery().eq(CourseTag::getCourseId,courseId));
         return ResponseResult.okResult(courseTags);
     }
 
