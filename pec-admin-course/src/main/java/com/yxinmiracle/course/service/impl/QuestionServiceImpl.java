@@ -278,12 +278,36 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    @Transactional
     public ResponseResult deleteQuestion(Integer questionId) {
+        if (questionId == null){
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        Question question = questionMapper.selectById(questionId);
+        Integer courseId = question.getCourseId();
+        short questionType = question.getType();
+        RecordCourseQuestion recordCourseQuestion = recordCourseQuestionMapper.selectOne(Wrappers.<RecordCourseQuestion>lambdaQuery().eq(RecordCourseQuestion::getCourseId, courseId));
+        LambdaUpdateWrapper<RecordCourseQuestion> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        if (questionType == Question.questionTypeEnum.singleChoiceQuestion.getCode()){
+            // 单选题
+            lambdaUpdateWrapper.eq(RecordCourseQuestion::getCourseId,courseId).set(RecordCourseQuestion::getSingleChoiceQuestionsCount,recordCourseQuestion.getSingleChoiceQuestionsCount()-1);
+        }
+        if (questionType == Question.questionTypeEnum.multipleChoiceQuestion.getCode()){
+            // 多选题
+            lambdaUpdateWrapper.eq(RecordCourseQuestion::getCourseId,courseId).set(RecordCourseQuestion::getMultipleChoiceQuestionsCount,recordCourseQuestion.getMultipleChoiceQuestionsCount()-1);
+        }
+        if (questionType == Question.questionTypeEnum.fillTheBlanksQuestion.getCode()){
+            // 填空题
+            lambdaUpdateWrapper.eq(RecordCourseQuestion::getCourseId,courseId).set(RecordCourseQuestion::getFillTheBlanksQuestionsCount,recordCourseQuestion.getSingleChoiceQuestionsCount()-1);
+        }
+        if (questionType == Question.questionTypeEnum.answerQuestion.getCode()){
+            // 解答题
+            lambdaUpdateWrapper.eq(RecordCourseQuestion::getCourseId,courseId).set(RecordCourseQuestion::getAnswerQuestionsCount,recordCourseQuestion.getSingleChoiceQuestionsCount()-1);
+        }
+        recordCourseQuestionMapper.update(null,lambdaUpdateWrapper);
         questionMapper.deleteById(questionId);
         questionTagMapper.delete(Wrappers.<QuestionTag>lambdaQuery().eq(QuestionTag::getQuestionId,questionId));
         questionItemMapper.delete(Wrappers.<QuestionItem>lambdaQuery().eq(QuestionItem::getQuestionId,questionId));
         return ResponseResult.okResult();
     }
-
-
 }
