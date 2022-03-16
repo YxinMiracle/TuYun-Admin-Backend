@@ -122,7 +122,7 @@ public class RelationServiceImpl implements RelationService {
         Integer oldRelationCount = courseRelation.getRelationCount();
         Integer newRelationCount = oldRelationCount + relationDataList.size();
         LambdaUpdateWrapper<CourseRelation> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.eq(CourseRelation::getRelationCount, newRelationCount);
+        lambdaUpdateWrapper.eq(CourseRelation::getCourseId, dto.getCourseId()).set(CourseRelation::getCourseRelationId,newRelationCount);
         courseRelationMapper.update(null, lambdaUpdateWrapper);
 
         /**
