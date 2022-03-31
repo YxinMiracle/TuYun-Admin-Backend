@@ -1,6 +1,14 @@
 server:
   port: 19003
 spring:
+  rabbitmq:
+    host: 192.168.211.132  #mq的服务器地址
+    username: guest #账号
+    password: guest #密码
+  data:
+    mongodb:
+      uri: mongodb://admin:123456@175.178.60.127:27017/?authSource=admin
+      database: pec_media
   application:
     name: pec-admin-file
   cloud:
@@ -11,5 +19,12 @@ logging:
   level:
     com.yxinmiracle: debug
 host: https://pic.yxinmiracle.com
+pec-service-manage-media:
+  upload-location: D:/Desktop_folder/Java_idea/PEC/pec-admin-parent/video/
+mq:
+  file:
+    queue-media-video-processor: queue_media_video_processor
+    routingkey-media-video: routingkey_media_video
+ffmpeg-path: C:/ffmpeg/ffmpeg-20200628-4cfcfb3-win64-static/ffmpeg-20200628-4cfcfb3-win64-static/bin/ffmpeg.exe
 
 

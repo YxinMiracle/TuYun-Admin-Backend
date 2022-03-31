@@ -26,7 +26,11 @@ public enum AppHttpCodeEnum {
     // 数据错误 3000~3500
     NO_OPERATOR_AUTH(3000,"无权限操作"),
     NEED_ADMIND(3001,"需要管理员权限"),
-    SERVER_ERROR(900001,"当前系统正在维护，请稍后重试");
+    SERVER_ERROR(900001,"当前系统正在维护，请稍后重试"),
+
+    VIDEO_PROCESS_ERROR(30003,"文件处理失败"),
+    VIDEO_PROCESSING(30002,"视频文件正在处理中"),
+    VIDEO_SEND_MSG_ERROR(30004,"mq发送信息失败");
 
     int code;
     String errorMessage;

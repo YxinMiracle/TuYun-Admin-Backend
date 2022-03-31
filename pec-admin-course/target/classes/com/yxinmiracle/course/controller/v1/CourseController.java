@@ -46,4 +46,10 @@ public class CourseController implements CourseControllerApi {
     public ResponseResult<List<Course>> getAllCourse() {
         return courseService.getAllCourse();
     }
+
+    @Override
+    @GetMapping("/{courseId}")
+    public ResponseResult getCourseByCourseId(@PathVariable("courseId") Integer courseId) {
+        return courseService.getCourseByCourseId(courseId);
+    }
 }

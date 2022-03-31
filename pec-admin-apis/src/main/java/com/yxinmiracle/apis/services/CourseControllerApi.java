@@ -14,4 +14,6 @@ public interface CourseControllerApi {
     public ResponseResult deleteCourse(Integer courseId);
 
     public ResponseResult getAllCourse();
+
+    public ResponseResult getCourseByCourseId(Integer courseId);
 }

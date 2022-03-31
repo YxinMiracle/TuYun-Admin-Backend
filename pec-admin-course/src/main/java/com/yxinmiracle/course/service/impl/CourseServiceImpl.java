@@ -52,6 +52,9 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private RecordCourseQuestionMapper recordCourseQuestionMapper;
 
+    @Autowired
+    private CourseVideoCountMapper courseVideoCountMapper;
+
     @Value("${host}")
     private String HOST;
 
@@ -132,6 +135,13 @@ public class CourseServiceImpl implements CourseService {
             courseTeacherMapper.insert(courseTeacher);
         }
 
+        // 更新courseVideoCount表
+        CourseVideoCount courseVideoCount = new CourseVideoCount();
+        courseVideoCount.setCourseId(course.getCourseId());
+        courseVideoCount.setCourseName(course.getCourseName());
+        courseVideoCount.setCourseVideoCount(0);
+        courseVideoCountMapper.insert(courseVideoCount);
+
         return ResponseResult.okResult();
     }
 
@@ -191,5 +201,11 @@ public class CourseServiceImpl implements CourseService {
     public ResponseResult<List<Course>> getAllCourse() {
         List<Course> courses = courseMapper.selectList(null);
         return ResponseResult.okResult(courses);
+    }
+
+    @Override
+    public ResponseResult getCourseByCourseId(Integer courseId) {
+        Course course = courseMapper.selectById(courseId);
+        return ResponseResult.okResult(course);
     }
 }

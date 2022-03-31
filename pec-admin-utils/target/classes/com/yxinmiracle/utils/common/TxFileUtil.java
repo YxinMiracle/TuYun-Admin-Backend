@@ -10,7 +10,10 @@ import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.region.Region;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
 
 public class TxFileUtil {
 
@@ -38,6 +41,38 @@ public class TxFileUtil {
             return "/"+key;
         }
         throw new RuntimeException("图片上传失败");
+    }
+
+    public static List<String> videoPreviewPictureUpload(String previewPictureFolderPath,String filePath){
+        String secretId = "AKIDGK8gxxg7ICqEMCm6AwSihQr1uWrwkIZZ";
+        String secretKey = "mIYWEfqkNjpeCUVGkzxfAON6YicPxFH2";
+        COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
+        Region region = new Region("ap-guangzhou");
+        ClientConfig clientConfig = new ClientConfig(region);  //1300659502
+        clientConfig.setHttpProtocol(HttpProtocol.https);
+        COSClient cosClient = new COSClient(cred, clientConfig);
+        String bucketName = "pec-1300659502"; //存储桶名称，格式：BucketName-APPID
+
+        File chunkFileFolder = new File(previewPictureFolderPath);
+        // 分块文件列表、
+        File[] files = chunkFileFolder.listFiles();
+        List<String> previewUrlList = new ArrayList<>();
+        for (File file : files) {
+            String key = "pec/"+filePath + file.getName();
+            previewUrlList.add(key);
+            try {
+                Thread.sleep(300);
+                PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file);
+                PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return previewUrlList;
+    }
+
+    public static void main(String[] args) {
+        videoPreviewPictureUpload("D:\\Desktop_folder\\Java_idea\\PEC\\pec-admin-parent\\video\\2\\f\\2f2d0b0cea3661542d7a7b4d32896bbd\\preview","2/f/2f2d0b0cea3661542d7a7b4d32896bbd/");
     }
 
 }

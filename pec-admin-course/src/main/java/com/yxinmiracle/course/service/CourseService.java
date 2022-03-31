@@ -17,4 +17,6 @@ public interface CourseService {
     ResponseResult deleteCourse(Integer courseId);
 
     ResponseResult<List<Course>> getAllCourse();
+
+    ResponseResult getCourseByCourseId(Integer courseId);
 }
