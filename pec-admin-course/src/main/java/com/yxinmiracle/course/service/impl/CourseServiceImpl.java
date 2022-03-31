@@ -136,6 +136,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         // 更新courseVideoCount表
+        // the end
         CourseVideoCount courseVideoCount = new CourseVideoCount();
         courseVideoCount.setCourseId(course.getCourseId());
         courseVideoCount.setCourseName(course.getCourseName());
