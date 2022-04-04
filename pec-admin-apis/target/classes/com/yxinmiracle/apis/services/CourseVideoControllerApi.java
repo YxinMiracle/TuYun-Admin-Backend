@@ -8,4 +8,6 @@ public interface CourseVideoControllerApi {
 
     public ResponseResult getCourseVideoCountData(CourseVideoCountDto dto);
 
+    public ResponseResult updateCourseVideoCount(Integer courseId);
+
 }

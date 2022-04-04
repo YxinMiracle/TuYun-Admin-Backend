@@ -1,7 +1,9 @@
 package com.yxinmiracle.course.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yxinmiracle.course.mapper.CourseVideoCountMapper;
 import com.yxinmiracle.course.mapper.CourseVideoMapper;
@@ -37,5 +39,14 @@ public class CourseVideoServiceImpl implements CourseVideoService {
         responseResult.setCode(AppHttpCodeEnum.SUCCESS.getCode());
         responseResult.setData(resultPage.getRecords());
         return responseResult;
+    }
+
+    @Override
+    public ResponseResult updateCourseVideoCount(Integer courseId) {
+        CourseVideoCount courseVideoCount = courseVideoCountMapper.selectOne(Wrappers.<CourseVideoCount>lambdaQuery().eq(CourseVideoCount::getCourseId, courseId));
+        LambdaUpdateWrapper<CourseVideoCount> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(CourseVideoCount::getCourseId,courseId).set(CourseVideoCount::getCourseVideoCount,courseVideoCount.getCourseVideoCount()+1);
+        courseVideoCountMapper.update(null,lambdaUpdateWrapper);
+        return ResponseResult.okResult();
     }
 }

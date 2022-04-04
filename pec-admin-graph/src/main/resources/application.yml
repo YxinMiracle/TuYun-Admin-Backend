@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: pec-admin-graph
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     nacos:
       discovery:
