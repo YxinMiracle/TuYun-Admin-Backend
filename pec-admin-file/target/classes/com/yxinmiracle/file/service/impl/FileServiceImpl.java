@@ -1,6 +1,7 @@
 package com.yxinmiracle.file.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.yxinmiracle.apis.services.feign.CourseVideoCountFeign;
 import com.yxinmiracle.file.config.RabbitMQConfig;
 import com.yxinmiracle.file.mapper.MediaFileRepository;
 import com.yxinmiracle.file.service.FileService;
@@ -56,6 +57,9 @@ public class FileServiceImpl implements FileService {
 
     @Value("${mq.file.routingkey-media-video}")
     String routingkey_media_video;
+
+    @Autowired
+    private CourseVideoCountFeign courseVideoCountFeign;
 
 
     @Override
@@ -197,6 +201,9 @@ public class FileServiceImpl implements FileService {
         mediaFile.setCourseId(courseId);
         mediaFile.setVideoName(videoName);
         mediaFileRepository.save(mediaFile);
+
+        // 通过feign调用添加回courseVideoCount表 count字段+1
+        courseVideoCountFeign.updateCourseVideoCount(Integer.parseInt(courseId));
         // 校验文件的md5值是否和前端传入的md5一致
         //        boolean checkFileMd5 = this.checkFileMd5(mergeFile, fileMd5);
         //        if (!checkFileMd5){
