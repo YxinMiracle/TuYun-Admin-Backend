@@ -1,6 +1,7 @@
 package com.yxinmiracle.course.service;
 
 import com.yxinmiracle.model.common.dtos.ResponseResult;
+import com.yxinmiracle.model.serives.dtos.ChangeCourseIsShowTypeDto;
 import com.yxinmiracle.model.serives.dtos.CourseDto;
 import com.yxinmiracle.model.serives.dtos.HandleCourseDto;
 import com.yxinmiracle.model.serives.pojos.Course;
@@ -19,4 +20,10 @@ public interface CourseService {
     ResponseResult<List<Course>> getAllCourse();
 
     ResponseResult getCourseByCourseId(Integer courseId);
+
+    ResponseResult getQuality();
+
+    ResponseResult getCourseByCategoryId(Integer categoryId);
+
+    ResponseResult updateCourseShowType(ChangeCourseIsShowTypeDto dto);
 }

@@ -3,6 +3,7 @@ package com.yxinmiracle.course.controller.v1;
 import com.yxinmiracle.apis.services.CourseControllerApi;
 import com.yxinmiracle.course.service.CourseService;
 import com.yxinmiracle.model.common.dtos.ResponseResult;
+import com.yxinmiracle.model.serives.dtos.ChangeCourseIsShowTypeDto;
 import com.yxinmiracle.model.serives.dtos.CourseDto;
 import com.yxinmiracle.model.serives.dtos.HandleCourseDto;
 import com.yxinmiracle.model.serives.pojos.Course;
@@ -51,5 +52,24 @@ public class CourseController implements CourseControllerApi {
     @GetMapping("/{courseId}")
     public ResponseResult getCourseByCourseId(@PathVariable("courseId") Integer courseId) {
         return courseService.getCourseByCourseId(courseId);
+    }
+
+    @Override
+    @GetMapping("/quality")
+    public ResponseResult getQuality() {
+        return courseService.getQuality();
+    }
+
+    @GetMapping("/category/{categoryId}")
+    @Override
+    public ResponseResult getCourseByCategoryId(@PathVariable("categoryId") Integer categoryId) {
+        return courseService.getCourseByCategoryId(categoryId);
+    }
+
+    @RequestMapping(value = "/show",method = RequestMethod.PUT)
+    @Override
+    public ResponseResult updateCourseShowType(@RequestBody ChangeCourseIsShowTypeDto dto) {
+        System.out.println(dto);
+        return courseService.updateCourseShowType(dto);
     }
 }
