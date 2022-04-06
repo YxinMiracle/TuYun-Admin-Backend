@@ -84,5 +84,30 @@ public class Course implements Serializable {
         }
     }
 
+    @Alias("CourseIsQuality")
+    public enum isQualityType{
+        isQuality((short)1),notQuality((short)0);
+
+        @Getter
+        short code;
+
+        isQualityType(short code) {
+            this.code = code;
+        }
+    }
+
+    @Alias("CourseIsShow")
+    public enum isShowType{
+        isShow((short)1),notShow((short)0);
+
+        @Getter
+        short code;
+
+        isShowType(short code) {
+            this.code = code;
+        }
+    }
+
+
 
 }
