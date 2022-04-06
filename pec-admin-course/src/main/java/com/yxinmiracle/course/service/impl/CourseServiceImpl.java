@@ -11,6 +11,7 @@ import com.yxinmiracle.course.service.CourseService;
 import com.yxinmiracle.model.common.dtos.PageResponseResult;
 import com.yxinmiracle.model.common.dtos.ResponseResult;
 import com.yxinmiracle.model.common.enums.AppHttpCodeEnum;
+import com.yxinmiracle.model.serives.dtos.ChangeCourseIsShowTypeDto;
 import com.yxinmiracle.model.serives.dtos.CourseDto;
 import com.yxinmiracle.model.serives.dtos.HandleCourseDto;
 import com.yxinmiracle.model.serives.pojos.*;
@@ -18,6 +19,8 @@ import com.yxinmiracle.model.serives.vos.CourseVo;
 import com.yxinmiracle.utils.common.ImageUrlUtil;
 import com.yxinmiracle.utils.common.JsoupUtil;
 import com.yxinmiracle.utils.common.PinyinUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -60,19 +63,19 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public ResponseResult getCourse(CourseDto dto) {
-        if (Objects.isNull(dto)){
+        if (Objects.isNull(dto)) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         dto.checkParam();
-        if (StringUtils.isBlank(dto.getIsQuality()+"") || Objects.isNull(dto.getIsQuality())){
-            dto.setIsQuality((short)-1);
+        if (StringUtils.isBlank(dto.getIsQuality() + "") || Objects.isNull(dto.getIsQuality())) {
+            dto.setIsQuality((short) -1);
         }
-        if (Objects.isNull(dto.getCourseCategoryItemId())){
+        if (Objects.isNull(dto.getCourseCategoryItemId())) {
             dto.setCourseCategoryItemId(-1);
         }
         List<CourseVo> courseList = courseMapper.getCourseList(dto);
         Integer courseListCount = courseMapper.getCourseListCount(dto);
-        ResponseResult result = new PageResponseResult(dto.getPage(),dto.getSize(),courseListCount);
+        ResponseResult result = new PageResponseResult(dto.getPage(), dto.getSize(), courseListCount);
         result.setHost(HOST);
         result.setData(courseList);
         result.setCode(200);
@@ -83,11 +86,11 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public ResponseResult addCourse(HandleCourseDto dto) {
-        logger.info("接收到添加课程的数据，{}",dto);
-        if (Objects.isNull(dto)){
+        logger.info("接收到添加课程的数据，{}", dto);
+        if (Objects.isNull(dto)) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
-        if(!dto.check()){
+        if (!dto.check()) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         dto.setImage(ImageUrlUtil.repalceImageUrl(dto.getImage(), HOST));
@@ -148,11 +151,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public ResponseResult updateCourse(HandleCourseDto dto) {
-        logger.info("接收到更新课程的数据，{}",dto);
-        if (Objects.isNull(dto)){
+        logger.info("接收到更新课程的数据，{}", dto);
+        if (Objects.isNull(dto)) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
-        if(!dto.check()){
+        if (!dto.check()) {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         dto.setImage(ImageUrlUtil.repalceImageUrl(dto.getImage(), HOST));
@@ -176,7 +179,7 @@ public class CourseServiceImpl implements CourseService {
         course.setInfoType(dto.getInfoType());
         courseMapper.updateById(course);
 
-        courseTeacherMapper.delete(Wrappers.<CourseTeacher>lambdaQuery().eq(CourseTeacher::getCourseId,dto.getCourseId()));
+        courseTeacherMapper.delete(Wrappers.<CourseTeacher>lambdaQuery().eq(CourseTeacher::getCourseId, dto.getCourseId()));
         for (int i = 0; i < dto.getTeacherIdList().size(); i++) {
             CourseTeacher courseTeacher = new CourseTeacher();
             courseTeacher.setUserId(dto.getTeacherIdList().get(i));
@@ -191,8 +194,8 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     public ResponseResult deleteCourse(Integer courseId) {
         LambdaUpdateWrapper<Course> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.eq(Course::getCourseId,courseId).set(Course::getIsDelete,Course.isDeleteType.isDelete.getCode());
-        courseMapper.update(null,lambdaUpdateWrapper);
+        lambdaUpdateWrapper.eq(Course::getCourseId, courseId).set(Course::getIsDelete, Course.isDeleteType.isDelete.getCode());
+        courseMapper.update(null, lambdaUpdateWrapper);
         return ResponseResult.okResult();
 //        courseTeacherMapper.delete(Wrappers.<CourseTeacher>lambdaQuery().eq(CourseTeacher::getCourseId,dto.getCourseId()));
 
@@ -208,5 +211,35 @@ public class CourseServiceImpl implements CourseService {
     public ResponseResult getCourseByCourseId(Integer courseId) {
         Course course = courseMapper.selectById(courseId);
         return ResponseResult.okResult(course);
+    }
+
+    @Override
+    public ResponseResult getQuality() {
+        List<Course> courseList = courseMapper.selectList(Wrappers.<Course>lambdaQuery().eq(Course::getIsQuality, Course.isQualityType.isQuality.getCode()));
+        return ResponseResult.okResult(courseList);
+    }
+
+    @Override
+    public ResponseResult getCourseByCategoryId(Integer categoryId) {
+        List<Course> courseList = courseMapper.selectList(Wrappers.<Course>lambdaQuery()
+                .eq(Course::getCourseCategoryItemId, categoryId)
+                .eq(Course::getIsQuality, Course.isQualityType.isQuality.getCode())
+                .eq(Course::getIsDelete, Course.isDeleteType.notDelete.getCode()));
+        return ResponseResult.okResult(courseList);
+    }
+
+    @Override
+    public ResponseResult updateCourseShowType(ChangeCourseIsShowTypeDto dto) {
+        if (Objects.isNull(dto)) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        if (CollectionUtils.isEmpty(dto.getCourseIdList())){
+            return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
+        }
+        LambdaUpdateWrapper<Course> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+
+        lambdaUpdateWrapper.in(Course::getCourseId, dto.getCourseIdList()).set(Course::getIsShow, dto.getIsShow());
+        courseMapper.update(null, lambdaUpdateWrapper);
+        return ResponseResult.okResult();
     }
 }
