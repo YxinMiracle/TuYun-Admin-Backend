@@ -69,7 +69,6 @@ public class CourseController implements CourseControllerApi {
     @RequestMapping(value = "/show",method = RequestMethod.PUT)
     @Override
     public ResponseResult updateCourseShowType(@RequestBody ChangeCourseIsShowTypeDto dto) {
-        System.out.println(dto);
         return courseService.updateCourseShowType(dto);
     }
 }
