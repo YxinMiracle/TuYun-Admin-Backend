@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yxinmiracle.user.mapper.MenuMapper">
+    <select id="getMenuListByRoleId" parameterType="Integer" resultType="com.yxinmiracle.model.user.pojos.Menu">
+        select
+        t1.*
+        from
+        menu as t1,
+        role_menu as t2
+        where
+        t2.menu_id = t1.menu_id
+        and
+        t2.role_id = #{roleId}
+    </select>
+</mapper>
