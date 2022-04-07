@@ -106,7 +106,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional
     public ResponseResult addQuestion(HandleQuestionDto dto) {
-        System.out.println(dto);
         if (Objects.isNull(dto)){
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
