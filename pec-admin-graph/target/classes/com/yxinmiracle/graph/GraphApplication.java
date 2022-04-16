@@ -89,5 +89,4 @@ public class GraphApplication {
     // ===================================== neo4j rabbbitmq settings end =====================================
 
 
-
 }

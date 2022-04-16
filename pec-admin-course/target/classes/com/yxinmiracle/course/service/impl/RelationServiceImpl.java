@@ -68,6 +68,12 @@ public class RelationServiceImpl implements RelationService {
     @Value("${mq.graph.routing.updateRelationNameRouting}")
     private String updateRelationNameRouting;
 
+    @Value("${mq.search.searchExchange}")
+    private String searchExchange;
+
+    @Value("${mq.search.routing.addQuestionTagRouting}")
+    private String addQuestionTagRouting;
+
     @Override
     @Transactional
     public ResponseResult addRelation(RelationDto dto) {
@@ -122,7 +128,7 @@ public class RelationServiceImpl implements RelationService {
         Integer oldRelationCount = courseRelation.getRelationCount();
         Integer newRelationCount = oldRelationCount + relationDataList.size();
         LambdaUpdateWrapper<CourseRelation> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.eq(CourseRelation::getCourseId, dto.getCourseId()).set(CourseRelation::getCourseRelationId,newRelationCount);
+        lambdaUpdateWrapper.eq(CourseRelation::getCourseId, dto.getCourseId()).set(CourseRelation::getRelationCount,newRelationCount);
         courseRelationMapper.update(null, lambdaUpdateWrapper);
 
         /**
@@ -130,6 +136,9 @@ public class RelationServiceImpl implements RelationService {
          */
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         Integer userId = (Integer) authentication.getPrincipal();
+
+        // 获取数据库中还没有的知识点数据
+        List<String> questionTagsNotInDb = new ArrayList<>();
 
         /**
          * 1.构造 courseTag 并添加进数据库
@@ -148,6 +157,7 @@ public class RelationServiceImpl implements RelationService {
             try {
                 courseTagMapper.insert(courseTag);
                 nodeList.add(new Node(dto.getCourseName(), tagName, "", dto.getCourseName(), Node.isDeleteEnum.notDelete.getCode(), dto.getCourseId(), courseTag.getCourseTagId()));
+                questionTagsNotInDb.add(courseTag.getTagName());
             } catch (Exception e) {
                 logger.error("出现了已经存在的tag");
             }
@@ -168,6 +178,8 @@ public class RelationServiceImpl implements RelationService {
         addNodeAndRelationDto.setNodeAndConnectNode(nodeAndConnectNode);
         logger.info("即将往rabbitMq发送信息，进行图数据库的添加，数据为{}", addNodeAndRelationDto);
         rabbitTemplate.convertAndSend(neo4jExchange, neo4jAddRelationAndNodeRouting, addNodeAndRelationDto);
+        logger.info("发往SearchMq中添加QuestionTag");
+        rabbitTemplate.convertAndSend(searchExchange, addQuestionTagRouting, questionTagsNotInDb);
         return ResponseResult.okResult();
     }
 

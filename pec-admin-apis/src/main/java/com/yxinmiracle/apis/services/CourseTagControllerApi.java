@@ -5,6 +5,8 @@ import com.yxinmiracle.model.serives.dtos.CourseTagAndTagPropertyDto;
 import com.yxinmiracle.model.serives.dtos.CourseTagDto;
 import com.yxinmiracle.model.serives.vos.CourseTagPropertyVo;
 
+import java.util.List;
+
 public interface CourseTagControllerApi {
     public ResponseResult showTagData(CourseTagDto dto);
 
