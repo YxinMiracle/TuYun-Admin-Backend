@@ -85,4 +85,45 @@ public class CourseApplication {
         return BindingBuilder.bind(resumeTagQueue()).to(neo4jExchange()).with(property);
     }
     // ===================================== neo4j rabbbitmq settings end =====================================
+
+    // ===================================== es rabbbitmq settings start =====================================
+
+    @Bean
+    public Queue addChoiceQuestionQueue(){
+        return new Queue(environment.getProperty("mq.search.queue.addChoiceQuestion"));
+    }
+
+    @Bean
+    public Queue addAnswerQuestionQueue(){
+        return new Queue(environment.getProperty("mq.search.queue.addAnswerQuestion"));
+    }
+
+    @Bean
+    public Queue addQuestionTagQueue(){
+        return new Queue(environment.getProperty("mq.search.queue.addQuestionTag"));
+    }
+
+    @Bean
+    public TopicExchange exchange(){
+        return new TopicExchange(environment.getProperty("mq.search.searchExchange"));
+    }
+
+    @Bean
+    public Binding addQuestionTagBinding(){
+        String property = environment.getProperty("mq.search.routing.addQuestionTagRouting");
+        return BindingBuilder.bind(addQuestionTagQueue()).to(exchange()).with(property);
+    }
+
+    @Bean
+    public Binding addAnswerQuestionBinding(){
+        String property = environment.getProperty("mq.search.routing.addAnswerQuestionRouting");
+        return BindingBuilder.bind(addAnswerQuestionQueue()).to(exchange()).with(property);
+    }
+
+    @Bean
+    public Binding addChoiceQuestionBinding(){
+        String property = environment.getProperty("mq.search.routing.addChoiceQuestionRouting");
+        return BindingBuilder.bind(addChoiceQuestionQueue()).to(exchange()).with(property);
+    }
+    // ===================================== es rabbbitmq settings end =====================================
 }

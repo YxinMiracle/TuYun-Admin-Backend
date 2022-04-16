@@ -25,13 +25,13 @@ public class CourseController implements CourseControllerApi {
     }
 
     @Override
-    @RequestMapping(value = "handle", method = RequestMethod.POST)
+    @RequestMapping(value = "/handle", method = RequestMethod.POST)
     public ResponseResult addCourse(@RequestBody HandleCourseDto dto) {
         return courseService.addCourse(dto);
     }
 
     @Override
-    @RequestMapping(value = "handle", method = RequestMethod.PUT)
+    @RequestMapping(value = "/handle", method = RequestMethod.PUT)
     public ResponseResult updateCourse(@RequestBody HandleCourseDto dto) {
         return courseService.updateCourse(dto);
     }

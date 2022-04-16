@@ -19,6 +19,7 @@
         <module>pec-admin-file</module>
         <module>pec-admin-advert</module>
         <module>pec-admin-graph</module>
+        <module>pec-admin-search</module>
     </modules>
     <!-- 继承Spring boot工程 -->
     <parent>
@@ -69,6 +70,7 @@
         <knife4j.version>2.0.2</knife4j.version>
         <com.alibaba.cloud>2.1.0.RELEASE</com.alibaba.cloud>
         <xxl.job.version>2.2.0-SNAPSHOT</xxl.job.version>
+        <elasticsearch.version>7.6.2</elasticsearch.version>
     </properties>
 
     <dependencies>

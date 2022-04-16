@@ -7,6 +7,7 @@ import com.yxinmiracle.course.service.QuestionService;
 import com.yxinmiracle.model.common.dtos.PageResponseResult;
 import com.yxinmiracle.model.common.dtos.ResponseResult;
 import com.yxinmiracle.model.common.enums.AppHttpCodeEnum;
+import com.yxinmiracle.model.search.es.EsQuestion;
 import com.yxinmiracle.model.serives.dtos.HandleQuestionDto;
 import com.yxinmiracle.model.serives.dtos.QuestionDto;
 import com.yxinmiracle.model.serives.pojos.*;
@@ -17,6 +18,7 @@ import com.yxinmiracle.utils.common.JsoupUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +61,17 @@ public class QuestionServiceImpl implements QuestionService {
     @Value("${host}")
     private String HOST;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Value("${mq.search.searchExchange}")
+    private String searchExchange;
+
+    @Value("${mq.search.routing.addChoiceQuestionRouting}")
+    private String addChoiceQuestionRouting;
+
+    @Value("${mq.search.routing.addAnswerQuestionRouting}")
+    private String addAnswerQuestionRouting;
 
     @Override
     public ResponseResult getQuestionData(QuestionDto dto) {
@@ -118,7 +131,10 @@ public class QuestionServiceImpl implements QuestionService {
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
         short type = dto.getType();
+
+        // 更新课程各类型题目的数量
         updateRecordQuestionData(type,courseId);
+
         if (type == Question.questionTypeEnum.singleChoiceQuestion.getCode() || type == Question.questionTypeEnum.multipleChoiceQuestion.getCode()){
             /**
              * this branch was used to set question which type is equals 1 or 2
@@ -152,6 +168,14 @@ public class QuestionServiceImpl implements QuestionService {
                 questionItemMapper.insert(questionItem);
             }
         }
+
+        // 构建Mq信息，进行发送，进行在Es中存储
+        EsQuestion esQuestion = new EsQuestion();
+        esQuestion.setQuestion(question);
+        esQuestion.setQuestionItemList(questionItemList);
+        esQuestion.setQuestionTagIds(dto.getCourseTagIdList());
+        //向队列中发送消息，进行往Es数据库中发送数据，（选择题，包括选项）
+        rabbitTemplate.convertAndSend(searchExchange, addChoiceQuestionRouting, esQuestion);
         return ResponseResult.okResult();
     }
 
@@ -164,6 +188,14 @@ public class QuestionServiceImpl implements QuestionService {
         if (Objects.isNull(question)){
             return ResponseResult.errorResult(AppHttpCodeEnum.PARAM_INVALID);
         }
+
+        // 构建Mq信息，进行发送，进行在Es中存储
+        EsQuestion esQuestion = new EsQuestion();
+        esQuestion.setQuestion(question);
+        esQuestion.setQuestionTagIds(dto.getCourseTagIdList());
+        //向队列中发送消息，进行往Es数据库中发送数据，（选择题，包括选项）
+        rabbitTemplate.convertAndSend(searchExchange, addAnswerQuestionRouting, esQuestion);
+
         return ResponseResult.okResult();
     }
 

@@ -42,3 +42,13 @@ mq:
       updateTagPropertyRouting: graph.update.tagProperty
       deleteTagRouting: graph.delete.tag
       resumeTagRouting: graph.resume.tag
+  search:
+    searchExchange: searchExchange
+    queue:
+      addChoiceQuestion: search.add.choiceQuestion
+      addAnswerQuestion: search.add.answerQuestion
+      addQuestionTag: search.add.questionTag
+    routing:
+      addChoiceQuestionRouting: search.add.choiceQuestion
+      addAnswerQuestionRouting: search.add.answerQuestion
+      addQuestionTagRouting: search.add.questionTag

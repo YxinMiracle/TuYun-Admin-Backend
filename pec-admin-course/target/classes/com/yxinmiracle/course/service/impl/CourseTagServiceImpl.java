@@ -98,6 +98,16 @@ public class CourseTagServiceImpl implements CourseTagService {
     }
 
     @Override
+    public List<String> getCourseTagByCourseTagIds(List<Integer> courseTagIds) {
+        List<CourseTag> courseTagList = courseTagMapper.selectList(Wrappers.<CourseTag>lambdaQuery().in(CourseTag::getCourseTagId, courseTagIds));
+        List<String> courseTagNameList = new ArrayList<>();
+        for (CourseTag courseTag : courseTagList) {
+            courseTagNameList.add(courseTag.getTagName());
+        }
+        return courseTagNameList;
+    }
+
+    @Override
     @Transactional
     public ResponseResult updateCourseTagNameAndProperty(CourseTagAndTagPropertyDto dto) {
         if (Objects.isNull(dto)) {

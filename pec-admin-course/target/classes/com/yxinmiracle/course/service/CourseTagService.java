@@ -5,6 +5,7 @@ import com.yxinmiracle.model.serives.dtos.CourseTagAndTagPropertyDto;
 import com.yxinmiracle.model.serives.dtos.CourseTagDto;
 import com.yxinmiracle.model.serives.vos.CourseTagPropertyVo;
 
+import java.util.List;
 import java.util.Set;
 
 public interface CourseTagService {
@@ -19,4 +20,6 @@ public interface CourseTagService {
     ResponseResult resumeTag(Integer tagId);
 
     ResponseResult getAllCourseTag(Integer courseId);
+
+    List<String> getCourseTagByCourseTagIds(List<Integer> courseTagIds);
 }
