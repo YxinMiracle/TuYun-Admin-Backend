@@ -53,3 +53,11 @@ spring:
             - Path=/graph/**
           filters:
             - StripPrefix= 1
+        # 搜索服务
+        - id: search
+          uri: lb://pec-admin-search
+          predicates:
+            - Path=/search/**
+          filters:
+            - StripPrefix= 1
+
